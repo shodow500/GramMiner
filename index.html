@@ -1,159 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Liquid Glass Miner</title>
-    <!-- اتصال به کتابخانه رسمی مینی‌اپ تلگرام -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <style>
-        /* تنظیمات پایه و ریست کردن فاصله‌ها */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-        
-        /* پس‌زمینه اصلی تاریک */
-        body { background-color: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; position: relative; }
-        
-        /* افکت مایع در پس‌زمینه (Blobs) */
-        .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; animation: float 10s infinite alternate ease-in-out; }
-        .blob-1 { width: 300px; height: 300px; background: #3b82f6; top: -50px; left: -50px; }
-        .blob-2 { width: 250px; height: 250px; background: #8b5cf6; bottom: -50px; right: -50px; animation-delay: -5s; }
-        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
-
-        /* استایل شیشه‌ای (Glassmorphism) برای کارت اصلی */
-        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2); }
-        
-        /* بخش نمایش موجودی */
-        .balance-section { margin-bottom: 30px; }
-        .balance-title { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .balance-amount { font-size: 30px; font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
-
-        /* بخش ماینینگ */
-        .mining-section { margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
-        .mining-symbol { width: 120px; height: 120px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0)); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } 50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); } 100% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } }
-        .hash-rate { font-size: 18px; color: #38bdf8; font-weight: 500; margin-bottom: 5px;}
-        .estimate-rate { font-size: 12px; color: #10b981; font-weight: 400; }
-
-        /* بخش فروشگاه */
-        .shop-section { background: rgba(0, 0, 0, 0.2); border-radius: 16px; padding: 20px; }
-        .shop-title { font-size: 16px; margin-bottom: 15px; color: #cbd5e1; }
-        .btn-buy { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); color: #fff; padding: 12px 20px; border-radius: 12px; width: 100%; font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
-        .btn-buy:hover { background: rgba(59, 130, 246, 0.4); }
-        .btn-buy:active { transform: scale(0.95); }
-        .btn-cost { display: block; font-size: 12px; color: #94a3b8; margin-top: 4px; }
-        
-        /* پیام وضعیت لودینگ ابری */
-        #statusMsg { font-size: 12px; color: #f59e0b; margin-bottom: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Liquid Glass Miner</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+body { background-color: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; height: 100vh; height: 100dvh; overflow: hidden; position: relative; }
+.blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; animation: float 10s infinite alternate ease-in-out; }
+.blob-1 { width: 300px; height: 300px; background: #3b82f6; top: -50px; left: -50px; }
+.blob-2 { width: 250px; height: 250px; background: #8b5cf6; bottom: -50px; right: -50px; animation-delay: -5s; }
+@keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
+.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 30px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2); }
+.balance-section { margin-bottom: 30px; }
+.balance-title { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+.balance-amount { font-size: 30px; font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); font-variant-numeric: tabular-nums; }
+.mining-section { margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
+.mining-symbol { width: 120px; height: 120px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0)); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 50px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } 50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); } 100% { transform: scale(1); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } }
+.hash-rate { font-size: 18px; color: #38bdf8; font-weight: 500; margin-bottom: 5px;}
+.estimate-rate { font-size: 12px; color: #10b981; font-weight: 400; }
+.shop-section { background: rgba(0, 0, 0, 0.2); border-radius: 16px; padding: 20px; }
+.shop-title { font-size: 16px; margin-bottom: 15px; color: #cbd5e1; }
+.btn-buy { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.5); color: #fff; padding: 12px 20px; border-radius: 12px; width: 100%; font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
+.btn-buy:hover { background: rgba(59, 130, 246, 0.4); }
+.btn-buy:active { transform: scale(0.95); }
+.btn-buy:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-cost { display: block; font-size: 12px; color: #94a3b8; margin-top: 4px; }
+#statusMsg { font-size: 12px; color: #f59e0b; margin-bottom: 10px; }
+</style>
 </head>
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
 
-    <div class="glass-card">
-        <div id="statusMsg">Loading secure data from Telegram...</div>
+<div class="glass-card">
+  <div id="statusMsg">Loading data from Telegram...</div>
 
-        <div class="balance-section">
-            <div class="balance-title">Balance</div>
-            <div class="balance-amount" id="balanceDisplay">0.00000000 Grams</div>
-        </div>
+  <div class="balance-section">
+    <div class="balance-title">Balance</div>
+    <div class="balance-amount" id="balanceDisplay">0.00000000 Grams</div>
+  </div>
 
-        <div class="mining-section">
-            <div class="mining-symbol">💎</div>
-            <div class="hash-rate">Mining Power: <span id="hashDisplay">5</span> kHz</div>
-            <div class="estimate-rate">Earns <span id="estimateDisplay">0.00000000</span> per 5 mins</div>
-        </div>
+  <div class="mining-section">
+    <div class="mining-symbol">💎</div>
+    <div class="hash-rate">Mining Power: <span id="hashDisplay">5</span> kHz</div>
+    <div class="estimate-rate">Earns <span id="estimateDisplay">0.00000000</span> per 5 mins</div>
+  </div>
 
-        <div class="shop-section">
-            <div class="shop-title">Shop</div>
-            <button class="btn-buy" id="buyBtn" disabled>
-                Upgrade +1 kHz
-                <span class="btn-cost">Cost: 0.005 Gram</span>
-            </button>
-        </div>
-    </div>
+  <div class="shop-section">
+    <div class="shop-title">Shop</div>
+    <button class="btn-buy" id="buyBtn" disabled>
+      Upgrade +1 kHz
+      <span class="btn-cost">Cost: <span id="costDisplay">0.005</span> Gram</span>
+    </button>
+  </div>
+</div>
 
-    <script>
-        // اتصال به مینی‌اپ تلگرام و باز کردن در حالت تمام صفحه
-        const tg = window.Telegram.WebApp;
-        tg.expand(); 
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-        // پارامترهای اقتصادی بازی
-        const gramPerKhzPerSecond = 0.0005 / 3600; // فرمول استخراج بر اساس ارزش پایه
-        const upgradeCost = 0.005; // هزینه ارتقای قدرت در فروشگاه
-        const upgradeReward = 1;   // میزان قدرت اضافه‌شده با هر خرید
+const gramPerKhzPerSecond = 0.0005 / 3600;
+const baseCost = 0.005;
+const upgradeReward = 1;
+const startHash = 5;
 
-        let balance = 0.00000000; 
-        let hashRate = 5; // قدرت اولیه پیش‌فرض     
+// قیمت با هر ارتقا بیشتر می‌شود
+const getCost = () => baseCost * Math.pow(1.15, hashRate - startHash);
 
-        const balanceDisplay = document.getElementById('balanceDisplay');
-        const hashDisplay = document.getElementById('hashDisplay');
-        const estimateDisplay = document.getElementById('estimateDisplay');
-        const buyBtn = document.getElementById('buyBtn');
-        const statusMsg = document.getElementById('statusMsg');
+let balance = 0;
+let hashRate = startHash;
+let last = Date.now();
+let loaded = false; // تا قبل از لود موفق، ذخیره انجام نمی‌شود
 
-        // بروزرسانی عناصر بصری صفحه
-        function updateUI() {
-            balanceDisplay.textContent = balance.toFixed(8) + ' Grams';
-            hashDisplay.textContent = hashRate;
-            let productionPer5Mins = hashRate * gramPerKhzPerSecond * 300;
-            estimateDisplay.textContent = productionPer5Mins.toFixed(8);
-        }
+const $ = id => document.getElementById(id);
+const balanceDisplay = $('balanceDisplay'), hashDisplay = $('hashDisplay'),
+      estimateDisplay = $('estimateDisplay'), costDisplay = $('costDisplay'),
+      buyBtn = $('buyBtn'), statusMsg = $('statusMsg');
 
-        // تابع ذخیره‌سازی امن در فضای ابری تلگرام
-        function saveSecureData() {
-            let dataToSave = JSON.stringify({ balance: balance, hashRate: hashRate });
-            tg.CloudStorage.setItem('secure_miner_data', dataToSave, function(error, success) {
-                if(error) {
-                    console.error("Error saving data to Telegram Cloud", error);
-                }
-            });
-        }
+function updateUI() {
+  balanceDisplay.textContent = balance.toFixed(8) + ' Grams';
+  hashDisplay.textContent = hashRate;
+  estimateDisplay.textContent = (hashRate * gramPerKhzPerSecond * 300).toFixed(8);
+  costDisplay.textContent = getCost().toFixed(5);
+}
 
-        // بازیابی اطلاعات امن کاربر از فضای ابری تلگرام هنگام شروع برنامه
-        tg.CloudStorage.getItem('secure_miner_data', function(error, value) {
-            if (!error && value) {
-                let savedData = JSON.parse(value);
-                balance = parseFloat(savedData.balance);
-                hashRate = parseInt(savedData.hashRate);
-            }
-            
-            // آماده‌سازی رابط کاربری پس از دریافت اطلاعات
-            statusMsg.style.display = 'none';
-            buyBtn.disabled = false;
-            updateUI();
-            startGameLoops();
-        });
+function saveData() {
+  if (!loaded || !tg.CloudStorage) return;
+  tg.CloudStorage.setItem('secure_miner_data',
+    JSON.stringify({ balance, hashRate, t: Date.now() }),
+    err => { if (err) console.error('Save error', err); });
+}
 
-        // شروع حلقه‌های منطق بازی
-        function startGameLoops() {
-            // حلقه استخراج خودکار هر ۱ ثانیه
-            setInterval(() => {
-                let minedAmount = hashRate * gramPerKhzPerSecond; 
-                balance += minedAmount;
-                updateUI();
-            }, 1000);
+// ماینینگ بر اساس زمان واقعی (حتی اگر تایمر در پس‌زمینه کند شود)
+function tick() {
+  const now = Date.now();
+  balance += hashRate * gramPerKhzPerSecond * (now - last) / 1000;
+  last = now;
+  updateUI();
+}
 
-            // ذخیره خودکار در فضای ابری هر ۱۰ ثانیه
-            setInterval(() => {
-                saveSecureData();
-            }, 10000);
-        }
+function start() {
+  loaded = true;
+  last = Date.now();
+  statusMsg.style.display = 'none';
+  buyBtn.disabled = false;
+  updateUI();
+  setInterval(tick, 1000);
+  setInterval(saveData, 10000);
+}
 
-        // منطق دکمه خرید در فروشگاه
-        buyBtn.addEventListener('click', () => {
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+if (!tg.CloudStorage) {
+  start(); // خارج از تلگرام: بدون ذخیره‌سازی
+} else {
+  tg.CloudStorage.getItem('secure_miner_data', (error, value) => {
+    if (error) {
+      // خطا → شروع نکن تا داده‌ی قبلی با صفر بازنویسی نشود
+      statusMsg.textContent = 'Failed to load data. Please reopen the app.';
+      return;
+    }
+    try {
+      const d = JSON.parse(value || '{}');
+      balance = Number(d.balance) || 0;
+      hashRate = parseInt(d.hashRate) || startHash;
+      // درآمد زمانی که کاربر اپ را بسته بود
+      if (d.t) balance += hashRate * gramPerKhzPerSecond * Math.max(0, Date.now() - d.t) / 1000;
+    } catch (e) {
+      console.error('Corrupt data', e);
+    }
+    start();
+  });
+}
 
-            if (balance >= upgradeCost) {
-                balance -= upgradeCost; 
-                hashRate += upgradeReward; 
-                updateUI();
-                saveSecureData(); // ذخیره فوری بعد از ارتقا
-            } else {
-                tg.showAlert(`Not enough Grams! You need at least ${upgradeCost} Gram.`);
-            }
-        });
-    </script>
+// ذخیره هنگام خروج یا رفتن به پس‌زمینه
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { tick(); saveData(); }
+  else last = Date.now();
+});
+window.addEventListener('pagehide', () => { tick(); saveData(); });
+
+buyBtn.addEventListener('click', () => {
+  if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+  tick();
+  const cost = getCost();
+  if (balance >= cost) {
+    balance -= cost;
+    hashRate += upgradeReward;
+    updateUI();
+    saveData();
+  } else {
+    tg.showAlert(`Not enough Grams! You need at least ${cost.toFixed(5)} Gram.`);
+  }
+});
+</script>
 </body>
 </html>
