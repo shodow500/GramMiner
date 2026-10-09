@@ -74,6 +74,7 @@ const getCost = () => baseCost * Math.pow(1.15, hashRate - startHash);
 let balance = 0;
 let hashRate = startHash;
 let last = Date.now();
+const canSave = !!tg.CloudStorage && tg.isVersionAtLeast('6.9');
 let loaded = false; // تا قبل از لود موفق، ذخیره انجام نمی‌شود
 
 const $ = id => document.getElementById(id);
@@ -89,10 +90,10 @@ function updateUI() {
 }
 
 function saveData() {
-  if (!loaded || !tg.CloudStorage) return;
+  if (!loaded || !canSave) return;
   tg.CloudStorage.setItem('secure_miner_data',
     JSON.stringify({ balance, hashRate, t: Date.now() }),
-    err => { if (err) console.error('Save error', err); });
+    err => { if (err) { statusMsg.style.display = 'block'; statusMsg.textContent = 'Save failed: ' + err; } });
 }
 
 // ماینینگ بر اساس زمان واقعی (حتی اگر تایمر در پس‌زمینه کند شود)
@@ -110,11 +111,14 @@ function start() {
   buyBtn.disabled = false;
   updateUI();
   setInterval(tick, 1000);
-  setInterval(saveData, 10000);
+  saveData(); // همان لحظه‌ی شروع یک بار ذخیره کن
+  setInterval(saveData, 5000);
 }
 
-if (!tg.CloudStorage) {
-  start(); // خارج از تلگرام: بدون ذخیره‌سازی
+if (!canSave) {
+  start(); // خارج از تلگرام یا نسخه‌ی قدیمی: بدون ذخیره‌سازی
+  statusMsg.style.display = 'block';
+  statusMsg.textContent = 'Saving unavailable: open inside Telegram (update the app)';
 } else {
   tg.CloudStorage.getItem('secure_miner_data', (error, value) => {
     if (error) {
